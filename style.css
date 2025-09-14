@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Define color palette and font */
+:root {
+    --primary-color: #0d6efd; /* Bootstrap's default blue, can be changed */
+    --success-color: #198754;
+    --light-bg: #f0f4f7;
+    --card-bg: #ffffff;
+    --font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--light-bg);
+}
+
+/* Override Bootstrap's primary color */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+.form-select:focus, .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: var(--primary-color);
+}
+a {
+    color: var(--primary-color);
+}
+
+/* Custom styling for the form card */
+.card {
+    border-radius: 1rem;
+}
+
+.input-group-text {
+    background-color: #fff;
+    border-right: 0;
+    color: #6c757d;
+}
+
+.input-group .form-control {
+    border-left: 0;
+}
+.input-group .form-control:focus {
+    border-left: 1px solid var(--primary-color);
+}
+.input-group:not(:last-child) .form-control {
+    border-right: 0;
+}
+
+/* Style for password toggle */
+.toggle-password {
+    cursor: pointer;
+    border-left: 0;
+}
+
+/* Style for Modal Notification Icon */
+#modalIcon {
+    font-size: 3.5rem;
+    color: var(--success-color);
+}
