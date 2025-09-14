@@ -1,22 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // --- Card Switching Logic ---
+    // --- Element Selections ---
     const loginCard = document.getElementById('login-card');
     const registerCard = document.getElementById('register-card');
+    const forgotPasswordCard = document.getElementById('forgot-password-card');
+    
     const showRegisterLink = document.getElementById('show-register-link');
     const showLoginLink = document.getElementById('show-login-link');
+    const forgotPasswordLink = document.getElementById('forgot-password-link');
+    const backToLoginLink = document.getElementById('back-to-login-link');
 
-    showRegisterLink.addEventListener('click', function(e) {
-        e.preventDefault();
+    // --- Card Switching Logic ---
+    function showCard(cardToShow) {
         loginCard.classList.add('d-none');
-        registerCard.classList.remove('d-none');
-    });
-
-    showLoginLink.addEventListener('click', function(e) {
-        e.preventDefault();
         registerCard.classList.add('d-none');
-        loginCard.classList.remove('d-none');
-    });
+        forgotPasswordCard.classList.add('d-none');
+        cardToShow.classList.remove('d-none');
+    }
+
+    showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); showCard(registerCard); });
+    showLoginLink.addEventListener('click', (e) => { e.preventDefault(); showCard(loginCard); });
+    forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); showCard(forgotPasswordCard); });
+    backToLoginLink.addEventListener('click', (e) => { e.preventDefault(); showCard(loginCard); });
 
     // --- Hide/Show Password Logic ---
     const togglePasswordIcons = document.querySelectorAll('.toggle-password');
@@ -51,28 +56,38 @@ document.addEventListener('DOMContentLoaded', function() {
         notificationModal.show();
     }
     
-    // --- Email Verification on Registration Logic ---
+    // --- Form Submission Logic ---
     const patientRegForm = document.getElementById('patient-register-form');
     const hospitalRegForm = document.getElementById('hospital-register-form');
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
 
     patientRegForm.addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent actual form submission for now
-        // ** In a real app, you would submit data to Firebase here. **
-        // ** On success from Firebase, you would show this notification. **
+        e.preventDefault();
         showNotification(
             'Registration Successful!',
             'A verification link has been sent to your email. Please check your inbox to activate your account.'
         );
-        patientRegForm.reset(); // Clear the form
+        patientRegForm.reset();
     });
 
     hospitalRegForm.addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent actual form submission for now
+        e.preventDefault();
         showNotification(
             'Hospital Registration Submitted!',
             'Your application has been received. A verification link has been sent to the contact email. You will be notified upon approval.'
         );
-        hospitalRegForm.reset(); // Clear the form
+        hospitalRegForm.reset();
+    });
+    
+    forgotPasswordForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        showNotification(
+            'Reset Link Sent',
+            'If an account with that email exists, a password reset link has been sent. Please check your inbox.',
+            'fa-paper-plane'
+        );
+        forgotPasswordForm.reset();
+        showCard(loginCard); // Return to login screen
     });
 
 });
