@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEDALLOC - Login & Register</title>
 
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- Main Container -->
     <div class="container-fluid">
         <div class="row vh-100 d-flex align-items-center justify-content-center">
             <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
                 
+                <!-- Login Form Card -->
                 <div id="login-card">
                     <div class="card shadow-lg border-0">
                         <div class="card-body p-4 p-sm-5">
@@ -25,22 +30,22 @@
                                 <p class="text-muted">Sign in to your account</p>
                             </div>
                             
-                            <form>
+                            <form id="login-form">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" placeholder="Email Address" required>
+                                    <input type="email" class="form-control" id="login-email" placeholder="Email Address" required>
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" placeholder="Password" required>
+                                    <input type="password" class="form-control" id="login-password" placeholder="Password" required>
                                     <span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span>
                                 </div>
                                 <div class="input-group mb-4">
                                     <span class="input-group-text"><i class="fas fa-users"></i></span>
-                                    <select class="form-select">
+                                    <select class="form-select" id="login-role">
                                         <option selected>Sign in as a Patient</option>
-                                        <option value="1">Sign in as a Hospital Staff</option>
-                                        <option value="2">Sign in as an Administrator</option>
+                                        <option value="hospital">Sign in as a Hospital Staff</option>
+                                        <option value="admin">Sign in as an Administrator</option>
                                     </select>
                                 </div>
                                 
@@ -59,6 +64,7 @@
                     </div>
                 </div>
 
+                <!-- Registration Form Card (Initially hidden) -->
                 <div id="register-card" class="d-none">
                      <div class="card shadow-lg border-0">
                         <div class="card-body p-4 p-sm-5">
@@ -77,23 +83,23 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="pills-patient" role="tabpanel">
                                     <form id="patient-register-form">
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" class="form-control" placeholder="Full Name"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input type="email" class="form-control" placeholder="Email Address"></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" id="patient-name" class="form-control" placeholder="Full Name" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input type="email" id="patient-email" class="form-control" placeholder="Email Address" required></div>
                                         <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-phone"></i></span><input type="tel" class="form-control" placeholder="Phone Number"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Create Password"><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
-                                        <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Confirm Password"><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" id="patient-password" class="form-control" placeholder="Create Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
+                                        <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Confirm Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
                                         <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Create Patient Account</button></div>
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="pills-hospital" role="tabpanel">
                                      <form id="hospital-register-form">
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-hospital"></i></span><input type="text" class="form-control" placeholder="Hospital Name"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span><input type="text" class="form-control" placeholder="Hospital Address"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user-tie"></i></span><input type="text" class="form-control" placeholder="Contact Person's Name"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-at"></i></span><input type="email" class="form-control" placeholder="Contact Person's Email"></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-hospital"></i></span><input type="text" class="form-control" placeholder="Hospital Name" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span><input type="text" class="form-control" placeholder="Hospital Address" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user-tie"></i></span><input type="text" class="form-control" placeholder="Contact Person's Name" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-at"></i></span><input type="email" id="hospital-email" class="form-control" placeholder="Contact Person's Email" required></div>
                                         <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-key"></i></span><input type="text" class="form-control" placeholder="Verification Code"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Create Password"><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
-                                        <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Confirm Password"><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" id="hospital-password" class="form-control" placeholder="Create Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
+                                        <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Confirm Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
                                         <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Register Hospital</button></div>
                                     </form>
                                 </div>
@@ -105,6 +111,7 @@
                     </div>
                 </div>
 
+                <!-- Forgot Password Card (Initially hidden) -->
                 <div id="forgot-password-card" class="d-none">
                     <div class="card shadow-lg border-0">
                         <div class="card-body p-4 p-sm-5">
@@ -115,7 +122,7 @@
                             <form id="forgot-password-form">
                                 <div class="input-group mb-4">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" placeholder="Email Address" required>
+                                    <input type="email" id="reset-email" class="form-control" placeholder="Email Address" required>
                                 </div>
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary btn-lg">Send Reset Link</button>
@@ -131,8 +138,19 @@
         </div>
     </div>
     
+    <!-- Notification Modal -->
     <div class="modal fade" id="notificationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center px-4 pb-4"><i id="modalIcon" class="fas mb-3"></i><h5 id="modalTitle" class="modal-title mb-2 fw-bold"></h5><p id="modalBody"></p><button type="button" class="btn btn-primary mt-2" data-bs-dismiss="modal">OK</button></div></div></div></div>
+    
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase Libraries -->
+    <!-- NOTE: We use the "compat" libraries to get the old syntax (e.g., firebase.auth()) which is easier for projects without build tools -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics-compat.js"></script>
+    
+    <!-- Your Config & Auth Logic -->
     <script src="conf.js"></script>
     <script src="auth.js"></script>
 
