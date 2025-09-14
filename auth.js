@@ -201,4 +201,3 @@ if (passwordInput.type === 'password') {
         showCard(loginCard); // Return to login screen
     });
 });
-
