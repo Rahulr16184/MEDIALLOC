@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEDALLOC - Login & Register</title>
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-    
-    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,20 +27,12 @@
                             <form id="login-form">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="login-email" placeholder="Email Address" required>
+                                    <input type="email" id="login-email" class="form-control" placeholder="Email Address" required>
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="login-password" placeholder="Password" required>
+                                    <input type="password" id="login-password" class="form-control" placeholder="Password" required>
                                     <span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span>
-                                </div>
-                                <div class="input-group mb-4">
-                                    <span class="input-group-text"><i class="fas fa-users"></i></span>
-                                    <select class="form-select" id="login-role">
-                                        <option selected>Sign in as a Patient</option>
-                                        <option value="hospital">Sign in as a Hospital Staff</option>
-                                        <option value="admin">Sign in as an Administrator</option>
-                                    </select>
                                 </div>
                                 
                                 <div class="d-grid">
@@ -68,45 +54,32 @@
                 <div id="register-card" class="d-none">
                      <div class="card shadow-lg border-0">
                         <div class="card-body p-4 p-sm-5">
-                            <div class="text-center mb-4">
-                                <h3 class="fw-bold"><i class="fas fa-bed-pulse me-2"></i>MEDALLOC</h3>
-                                <p class="text-muted">Create your new account</p>
-                            </div>
-                            <ul class="nav nav-pills nav-fill mb-4" id="pills-tab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-patient" type="button" role="tab">I'm a Patient</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-hospital" type="button" role="tab">I'm a Hospital</button>
-                                </li>
+                            <div class="text-center mb-4"><h3 class="fw-bold"><i class="fas fa-bed-pulse me-2"></i>MEDALLOC</h3><p class="text-muted">Create your new account</p></div>
+                            <ul class="nav nav-pills nav-fill mb-4" role="tablist">
+                                <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-patient" type="button" role="tab">I'm a Patient</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-hospital" type="button" role="tab">I'm a Hospital</button></li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="pills-patient" role="tabpanel">
                                     <form id="patient-register-form">
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" id="patient-name" class="form-control" placeholder="Full Name" required></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input type="email" id="patient-email" class="form-control" placeholder="Email Address" required></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-phone"></i></span><input type="tel" class="form-control" placeholder="Phone Number"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" id="patient-password" class="form-control" placeholder="Create Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
-                                        <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Confirm Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user"></i></span><input id="patient-name" type="text" class="form-control" placeholder="Full Name" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input id="patient-email" type="email" class="form-control" placeholder="Email Address" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input id="patient-password" type="password" class="form-control" placeholder="Create Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
                                         <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Create Patient Account</button></div>
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="pills-hospital" role="tabpanel">
                                      <form id="hospital-register-form">
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-hospital"></i></span><input type="text" class="form-control" placeholder="Hospital Name" required></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span><input type="text" class="form-control" placeholder="Hospital Address" required></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user-tie"></i></span><input type="text" class="form-control" placeholder="Contact Person's Name" required></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-at"></i></span><input type="email" id="hospital-email" class="form-control" placeholder="Contact Person's Email" required></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-key"></i></span><input type="text" class="form-control" placeholder="Verification Code"></div>
-                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" id="hospital-password" class="form-control" placeholder="Create Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
-                                        <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Confirm Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-hospital"></i></span><input id="hospital-name" type="text" class="form-control" placeholder="Hospital Name" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span><input id="hospital-address" type="text" class="form-control" placeholder="Hospital Address" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-user-tie"></i></span><input id="hospital-contact-name" type="text" class="form-control" placeholder="Contact Person's Name" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-at"></i></span><input id="hospital-email" type="email" class="form-control" placeholder="Contact Person's Email" required></div>
+                                        <div class="input-group mb-3"><span class="input-group-text"><i class="fas fa-lock"></i></span><input id="hospital-password" type="password" class="form-control" placeholder="Create Password" required><span class="input-group-text toggle-password"><i class="fas fa-eye-slash"></i></span></div>
                                         <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Register Hospital</button></div>
                                     </form>
                                 </div>
                             </div>
-                            <div class="text-center mt-4">
-                                <p class="text-muted">Already have an account? <a href="#" id="show-login-link" class="fw-bold text-decoration-none">Sign In</a></p>
-                            </div>
+                            <div class="text-center mt-4"><p class="text-muted">Already have an account? <a href="#" id="show-login-link" class="fw-bold text-decoration-none">Sign In</a></p></div>
                         </div>
                     </div>
                 </div>
@@ -115,22 +88,12 @@
                 <div id="forgot-password-card" class="d-none">
                     <div class="card shadow-lg border-0">
                         <div class="card-body p-4 p-sm-5">
-                            <div class="text-center mb-4">
-                                <h3 class="fw-bold"><i class="fas fa-question-circle me-2"></i>Reset Password</h3>
-                                <p class="text-muted">Enter your email to receive a reset link</p>
-                            </div>
+                            <div class="text-center mb-4"><h3 class="fw-bold"><i class="fas fa-question-circle me-2"></i>Reset Password</h3><p class="text-muted">Enter your email to receive a reset link</p></div>
                             <form id="forgot-password-form">
-                                <div class="input-group mb-4">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" id="reset-email" class="form-control" placeholder="Email Address" required>
-                                </div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">Send Reset Link</button>
-                                </div>
+                                <div class="input-group mb-4"><span class="input-group-text"><i class="fas fa-envelope"></i></span><input id="reset-email" type="email" class="form-control" placeholder="Email Address" required></div>
+                                <div class="d-grid"><button type="submit" class="btn btn-primary btn-lg">Send Reset Link</button></div>
                             </form>
-                            <div class="text-center mt-4">
-                                <p class="text-muted">Remembered your password? <a href="#" id="back-to-login-link" class="fw-bold text-decoration-none">Sign In</a></p>
-                            </div>
+                            <div class="text-center mt-4"><p class="text-muted">Remembered your password? <a href="#" id="back-to-login-link" class="fw-bold text-decoration-none">Sign In</a></p></div>
                         </div>
                     </div>
                 </div>
@@ -139,20 +102,32 @@
     </div>
     
     <!-- Notification Modal -->
-    <div class="modal fade" id="notificationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center px-4 pb-4"><i id="modalIcon" class="fas mb-3"></i><h5 id="modalTitle" class="modal-title mb-2 fw-bold"></h5><p id="modalBody"></p><button type="button" class="btn btn-primary mt-2" data-bs-dismiss="modal">OK</button></div></div></div></div>
-    
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Firebase Libraries -->
-    <!-- NOTE: We use the "compat" libraries to get the old syntax (e.g., firebase.auth()) which is easier for projects without build tools -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body text-center px-4 pb-4">
+              <div id="modal-spinner" class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+              <i id="modalIcon" class="fas mb-3"></i>
+              <h5 id="modalTitle" class="modal-title mb-2 fw-bold"></h5>
+              <p id="modalBody"></p>
+              <button id="modal-ok-btn" type="button" class="btn btn-primary mt-2" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
     <!-- Your Config & Auth Logic -->
     <script src="conf.js"></script>
     <script src="auth.js"></script>
-
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
