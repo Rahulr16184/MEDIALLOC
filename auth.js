@@ -1,126 +1,179 @@
 // --- Initialize Firebase ---
-// This uses the firebaseConfig object from conf.js
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const analytics = firebase.analytics();
+const db = firebase.firestore();
 
-console.log("Firebase Initialized Successfully");
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//                 -- ADMIN CONFIGURATION --
+//
+//   IMPORTANT: Replace the placeholder email below with the
+//   actual email address you want to use for the system administrator.
+//   This is the ONLY email that will be redirected to administration.html
+//
+const ADMIN_EMAIL = "rahulr16184@gmail.com";
+//
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-// --- Firebase Logic Functions (Now with real Firebase code) ---
+console.log("Firebase and Firestore Initialized. Admin email is set to:", ADMIN_EMAIL);
 
-/**
- * Handles user login using Firebase Auth.
- * @param {string} email - The user's email.
- * @param {string} password - The user's password.
- */
+// --- Loading Spinner and Notification ---
+const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalIcon = document.getElementById('modalIcon');
+const modalSpinner = document.getElementById('modal-spinner');
+const modalOkBtn = document.getElementById('modal-ok-btn');
+
+function showNotification(title, message, iconClass = 'fa-circle-check', iconColor = 'var(--success-color)') {
+    modalSpinner.classList.add('d-none');
+    modalIcon.classList.remove('d-none');
+    modalOkBtn.classList.remove('d-none');
+
+    modalTitle.textContent = title;
+    modalBody.textContent = message;
+    modalIcon.className = `fas ${iconClass} fa-4x`;
+    modalIcon.style.color = iconColor;
+    notificationModal.show();
+}
+
+function showLoading(message) {
+    modalIcon.classList.add('d-none');
+    modalOkBtn.classList.add('d-none');
+    modalSpinner.classList.remove('d-none');
+    
+    modalTitle.textContent = message;
+    modalBody.textContent = 'Please wait...';
+    notificationModal.show();
+}
+
+// --- Firebase Logic Functions ---
+
 async function handleLogin(email, password) {
+    showLoading('Signing In');
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        if (user.emailVerified) {
-            console.log("User logged in successfully:", user.uid);
-            // On success, you would typically redirect the user to the main app page.
-            // For now, we'll show a success message.
-            window.location.href = 'dashboard.html'; // Example redirect
-        } else {
-            // If the email is not verified, prevent login.
-            showNotification('Login Failed', 'Please verify your email address before logging in. Check your inbox for a verification link.', 'fa-envelope', 'var(--primary-color)');
-            auth.signOut(); // Sign out the user until they verify.
+        if (!user.emailVerified) {
+            auth.signOut();
+            return showNotification('Login Failed', 'Please verify your email address before signing in.', 'fa-envelope', 'var(--primary-color)');
         }
+
+        // ** ROLE-BASED REDIRECTION LOGIC **
+        if (user.email === ADMIN_EMAIL) {
+            console.log("Administrator login successful.");
+            window.location.href = 'administration.html';
+            return;
+        }
+
+        // Fetch user role from Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+            auth.signOut();
+            return showNotification('Login Failed', 'User data not found. Please contact support.', 'fa-user-slash', '#dc3545');
+        }
+
+        const userData = userDoc.data();
+        switch (userData.role) {
+            case 'patient':
+                console.log("Patient login successful.");
+                window.location.href = 'patient.html';
+                break;
+            case 'hospital':
+                 console.log("Hospital login successful.");
+                window.location.href = 'hospital.html';
+                break;
+            default:
+                auth.signOut();
+                showNotification('Login Failed', 'No valid role assigned to this account.', 'fa-exclamation-triangle', '#ffc107');
+        }
+
     } catch (error) {
-        console.error("Firebase Login Error:", error.code, error.message);
-        let friendlyMessage = "An error occurred during login. Please try again.";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            friendlyMessage = "Invalid email or password. Please check your credentials and try again.";
-        }
-        showNotification('Login Failed', friendlyMessage, 'fa-circle-xmark', '#dc3545');
+        let msg = "Invalid email or password. Please try again.";
+        console.error("Login Error:", error.code, error.message);
+        showNotification('Login Failed', msg, 'fa-circle-xmark', '#dc3545');
     }
 }
 
-
-/**
- * Handles new patient registration using Firebase Auth.
- * @param {string} email - The patient's email.
- * @param {string} password - The patient's chosen password.
- */
-async function handlePatientRegister(email, password) {
+async function handlePatientRegister(name, email, password) {
+    showLoading('Creating Account');
     try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        console.log("Patient account created, sending verification email...");
-        
-        // Send verification email
+        await userCredential.user.updateProfile({ displayName: name });
+        await userCredential.user.sendEmailVerification();
+        await db.collection('users').doc(userCredential.user.uid).set({
+            name: name,
+            email: email,
+            role: 'patient',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        auth.signOut();
+        showNotification('Registration Successful!', 'A verification link has been sent to your email. Please check your inbox to activate your account.');
+    } catch (error) {
+        let msg = "Couldn't create your account. Please try again.";
+        if (error.code === 'auth/email-already-in-use') msg = "An account with this email already exists.";
+        if (error.code === 'auth/weak-password') msg = "Password is too weak. It must be at least 6 characters.";
+        console.error("Registration Error:", error.code);
+        showNotification('Registration Failed', msg, 'fa-circle-xmark', '#dc3545');
+    }
+}
+
+async function handleHospitalRegister(hospitalData) {
+    showLoading('Submitting Application');
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(hospitalData.email, hospitalData.password);
+        await userCredential.user.updateProfile({ displayName: hospitalData.contactName });
         await userCredential.user.sendEmailVerification();
         
-        showNotification(
-            'Registration Successful!',
-            'Your account has been created. A verification link has been sent to your email. Please check your inbox to activate your account.'
-        );
-        auth.signOut(); // Sign out until they verify
+        const userDocRef = db.collection('users').doc(userCredential.user.uid);
+        const hospitalDocRef = db.collection('hospitals').doc(userCredential.user.uid);
+
+        const batch = db.batch();
+        batch.set(userDocRef, {
+            name: hospitalData.contactName,
+            email: hospitalData.email,
+            role: 'hospital',
+            hospitalId: userCredential.user.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        batch.set(hospitalDocRef, {
+            hospitalName: hospitalData.hospitalName,
+            address: hospitalData.address,
+            contactName: hospitalData.contactName,
+            contactEmail: hospitalData.email,
+            status: 'pending_approval',
+            adminId: userCredential.user.uid
+        });
+        await batch.commit();
+
+        auth.signOut();
+        showNotification('Application Submitted!', 'A verification link has been sent to your email. Your application is now pending review by an administrator.');
     } catch (error) {
-        console.error("Firebase Registration Error:", error.code, error.message);
-        let friendlyMessage = "Couldn't create your account. Please try again.";
-        if (error.code === 'auth/email-already-in-use') {
-            friendlyMessage = "An account with this email address already exists. Please try logging in.";
-        } else if (error.code === 'auth/weak-password') {
-            friendlyMessage = "The password is too weak. It should be at least 6 characters long.";
-        }
-        showNotification('Registration Failed', friendlyMessage, 'fa-circle-xmark', '#dc3545');
+        let msg = "Couldn't submit your application. Please try again.";
+        if (error.code === 'auth/email-already-in-use') msg = "An account with this contact email already exists.";
+        console.error("Hospital Registration Error:", error.code, error.message);
+        showNotification('Application Failed', msg, 'fa-circle-xmark', '#dc3545');
     }
 }
 
-/**
- * Handles new hospital registration (placeholder).
- * In a real app, this would also save hospital details to a Firestore database for admin approval.
- * @param {string} email - The hospital contact's email.
- * @param {string} password - The hospital contact's password.
- */
-async function handleHospitalRegister(email, password) {
-    // For now, this follows the same logic as patient registration.
-    // In a full application, you would add logic here to save hospital-specific data
-    // to your Firestore database for an admin to review and approve.
-    await handlePatientRegister(email, password); // Re-using the same auth logic for now
-}
-
-/**
- * Handles password reset request using Firebase Auth.
- * @param {string} email - The user's email to send the reset link to.
- */
 async function handlePasswordReset(email) {
+    showLoading('Sending Link');
     try {
         await auth.sendPasswordResetEmail(email);
-        showNotification(
-            'Reset Link Sent',
-            'If an account with that email exists, a password reset link has been sent. Please check your inbox.',
-            'fa-paper-plane'
-        );
+        showNotification('Reset Link Sent', 'If an account with that email exists, a password reset link has been sent. Please check your inbox.', 'fa-paper-plane');
     } catch (error) {
-        console.error("Firebase Password Reset Error:", error.code, error.message);
-        // We show the same success message even on failure to prevent email enumeration attacks.
-        showNotification(
-            'Reset Link Sent',
-            'If an account with that email exists, a password reset link has been sent. Please check your inbox.',
-            'fa-paper-plane'
-        );
+        console.error("Password Reset Error:", error.code);
+        showNotification('Reset Link Sent', 'If an account with that email exists, a password reset link has been sent. Please check your inbox.', 'fa-paper-plane');
     }
 }
 
-
-// --- DOM Event Listeners & UI Logic (No changes needed below this line) ---
+// --- DOM Event Listeners & UI Logic ---
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // --- Element Selections ---
     const loginCard = document.getElementById('login-card');
     const registerCard = document.getElementById('register-card');
     const forgotPasswordCard = document.getElementById('forgot-password-card');
-    
-    const showRegisterLink = document.getElementById('show-register-link');
-    const showLoginLink = document.getElementById('show-login-link');
-    const forgotPasswordLink = document.getElementById('forgot-password-link');
-    const backToLoginLink = document.getElementById('back-to-login-link');
 
-    // --- Card Switching Logic ---
     function showCard(cardToShow) {
         loginCard.classList.add('d-none');
         registerCard.classList.add('d-none');
@@ -128,76 +181,50 @@ document.addEventListener('DOMContentLoaded', function() {
         cardToShow.classList.remove('d-none');
     }
 
-    showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); showCard(registerCard); });
-    showLoginLink.addEventListener('click', (e) => { e.preventDefault(); showCard(loginCard); });
-    forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); showCard(forgotPasswordCard); });
-    backToLoginLink.addEventListener('click', (e) => { e.preventDefault(); showCard(loginCard); });
+    document.getElementById('show-register-link').addEventListener('click', (e) => { e.preventDefault(); showCard(registerCard); });
+    document.getElementById('show-login-link').addEventListener('click', (e) => { e.preventDefault(); showCard(loginCard); });
+    document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); showCard(forgotPasswordCard); });
+    document.getElementById('back-to-login-link').addEventListener('click', (e) => { e.preventDefault(); showCard(loginCard); });
 
-    // --- Hide/Show Password Logic ---
-    document.querySelectorAll('.toggle-password').forEach(iconEl => {
-        iconEl.addEventListener('click', function() {
+    document.querySelectorAll('.toggle-password').forEach(el => {
+        el.addEventListener('click', function() {
             const passwordInput = this.previousElementSibling;
             const icon = this.querySelector('i');
-if (passwordInput.type === 'password') {
+            if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             } else {
                 passwordInput.type = 'password';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
             }
         });
     });
 
-    // --- Notification Modal Logic ---
-    const notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const modalIcon = document.getElementById('modalIcon');
-    
-    window.showNotification = function(title, message, iconClass = 'fa-circle-check', iconColor = 'var(--success-color)') {
-        modalTitle.textContent = title;
-        modalBody.textContent = message;
-        modalIcon.className = `fas ${iconClass} fa-4x`;
-        modalIcon.style.color = iconColor;
-        notificationModal.show();
-    }
-    
-    // --- Form Submission Logic ---
-    const loginForm = document.getElementById('login-form');
-    const patientRegForm = document.getElementById('patient-register-form');
-    const hospitalRegForm = document.getElementById('hospital-register-form');
-    const forgotPasswordForm = document.getElementById('forgot-password-form');
-
-    loginForm.addEventListener('submit', async function(e) {
+    document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        await handleLogin(email, password);
+        handleLogin(document.getElementById('login-email').value, document.getElementById('login-password').value);
     });
 
-    patientRegForm.addEventListener('submit', async function(e) {
+    document.getElementById('patient-register-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('patient-email').value;
-        const password = document.getElementById('patient-password').value;
-        await handlePatientRegister(email, password);
-        patientRegForm.reset();
+        handlePatientRegister(document.getElementById('patient-name').value, document.getElementById('patient-email').value, document.getElementById('patient-password').value);
     });
 
-    hospitalRegForm.addEventListener('submit', async function(e) {
+    document.getElementById('hospital-register-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('hospital-email').value;
-        const password = document.getElementById('hospital-password').value;
-        await handleHospitalRegister(email, password);
-        hospitalRegForm.reset();
+        const hospitalData = {
+            hospitalName: document.getElementById('hospital-name').value,
+            address: document.getElementById('hospital-address').value,
+            contactName: document.getElementById('hospital-contact-name').value,
+            email: document.getElementById('hospital-email').value,
+            password: document.getElementById('hospital-password').value
+        };
+        handleHospitalRegister(hospitalData);
     });
-    
-    forgotPasswordForm.addEventListener('submit', async function(e) {
+
+    document.getElementById('forgot-password-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('reset-email').value;
-        await handlePasswordReset(email);
-        forgotPasswordForm.reset();
-        showCard(loginCard); // Return to login screen
+        handlePasswordReset(document.getElementById('reset-email').value);
     });
 });
+
