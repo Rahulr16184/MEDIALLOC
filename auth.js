@@ -5,7 +5,7 @@ const db = firebase.firestore();
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //                 -- ADMIN CONFIGURATION --
-const ADMIN_EMAIL = "YOUR_ADMIN_EMAIL@example.com";
+const ADMIN_EMAIL = "rahulr16184@gmail.com";
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 console.log("Firebase and Firestore Initialized. Admin email is:", ADMIN_EMAIL);
